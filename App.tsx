@@ -1,105 +1,103 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-} from "react-native";
 import React from "react";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 
-interface Book {
-  id: string;
-  title: string;
-  author: string;
-  description: string;
-  image: string;
-}
+import HomeScreen from "./src/screens/HomeScreen";
+import DetailScreen from "./src/screens/DetailScreen";
+import ProfileScreen from "./src/screens/ProfileScreen";
 
-const books: Book[] = [
-  {
-    id: "1",
-    title: "Atomic Habits",
-    author: "James Clear",
-    description: "Buku tentang membangun kebiasaan kecil yang berdampak besar.",
-    image: "https://images-na.ssl-images-amazon.com/images/I/91bYsX41DVL.jpg",
-  },
-  {
-    id: "2",
-    title: "Deep Work",
-    author: "Cal Newport",
-    description: "Cara meningkatkan fokus dalam bekerja.",
-    image: "https://images-na.ssl-images-amazon.com/images/I/71QKQ9mwV7L.jpg",
-  },
-  {
-    id: "3",
-    title: "Clean Code",
-    author: "Robert C. Martin",
-    description: "Panduan menulis kode yang bersih dan mudah dipelihara.",
-    image: "https://images-na.ssl-images-amazon.com/images/I/41SH-SvWPxL.jpg",
-  },
-];
-
-const App = () => {
-  return (
-    <SafeAreaProvider style={{ backgroundColor: "#87CEEB" }}>
-      <SafeAreaView >
-        <FlatList
-          data={books}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.card}>
-              <Image source={{ uri: item.image }} style={styles.image} />
-
-              <View style={styles.content}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.author}>{item.author}</Text>
-                <Text style={styles.description}>{item.description}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
-      </SafeAreaView>
-    </SafeAreaProvider>
-  );
+export type HomeStackParamList = {
+  Home: undefined;
+  Detail: {
+    id: number;
+    name: string;
+  };
 };
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    margin: 12,
-    padding: 12,
-    borderRadius: 10,
-    elevation: 3,
-  },
+export type RootTabParamList = {
+  HomeTab: undefined;
+  ProfileTab: undefined;
+};
 
-  image: {
-    width: 80,
-    height: 120,
-    borderRadius: 8,
-  },
+const Stack = createNativeStackNavigator<HomeStackParamList>();
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
-  content: {
-    flex: 1,
-    marginLeft: 12,
-    justifyContent: "center",
-  },
+function HomeStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          title: "Home",
+          headerStyle: {
+            backgroundColor: "#3E3E75",
+          },
+          headerTintColor: "#fff",
+        }}
+      />
 
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{
+          title: "Detail Product",
+          headerStyle: {
+            backgroundColor: "#3E3E75",
+          },
+          headerTintColor: "#fff",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
-  author: {
-    marginTop: 6,
-    color: "gray",
-  },
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarActiveTintColor: "#e67e22",
+          tabBarInactiveTintColor: "gray",
 
-  description: {
-    marginTop: 8,
-  },
-});
+          tabBarIcon: ({ focused, color, size }) => {
+            let icon: keyof typeof Ionicons.glyphMap = "home";
 
-export default App;
+            if (route.name === "HomeTab") {
+              icon = focused ? "home" : "home-outline";
+            } else {
+              icon = focused ? "person" : "person-outline";
+            }
+
+            return (
+              <Ionicons
+                name={icon}
+                size={size}
+                color={color}
+              />
+            );
+          },
+        })}
+      >
+        <Tab.Screen
+          name="HomeTab"
+          component={HomeStack}
+          options={{
+            title: "Home",
+            headerShown: false,
+          }}
+        />
+
+        <Tab.Screen
+          name="ProfileTab"
+          component={ProfileScreen}
+          options={{
+            title: "Profile",
+          }}
+        />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
