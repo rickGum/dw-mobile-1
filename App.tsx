@@ -1,3 +1,4 @@
+import "./global.css";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -7,6 +8,8 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./src/screens/HomeScreen";
 import DetailScreen from "./src/screens/DetailScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
+import ActivityScreen from "./src/screens/ActivityScreen";
+import AnalyticsScreen from "./src/screens/AnalyticsScreen";
 
 export type HomeStackParamList = {
   Home: undefined;
@@ -18,6 +21,8 @@ export type HomeStackParamList = {
 
 export type RootTabParamList = {
   HomeTab: undefined;
+  Analytics: undefined;
+  Activity: undefined;
   ProfileTab: undefined;
 };
 
@@ -33,7 +38,7 @@ function HomeStack() {
         options={{
           title: "Home",
           headerStyle: {
-            backgroundColor: "#3E3E75",
+            backgroundColor: "#2196F3",
           },
           headerTintColor: "#fff",
         }}
@@ -45,7 +50,7 @@ function HomeStack() {
         options={{
           title: "Detail Product",
           headerStyle: {
-            backgroundColor: "#3E3E75",
+            backgroundColor: "#2196F3",
           },
           headerTintColor: "#fff",
         }}
@@ -59,7 +64,7 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarActiveTintColor: "#e67e22",
+          tabBarActiveTintColor: "#0D47A1",
           tabBarInactiveTintColor: "gray",
 
           tabBarIcon: ({ focused, color, size }) => {
@@ -67,18 +72,17 @@ export default function App() {
 
             if (route.name === "HomeTab") {
               icon = focused ? "home" : "home-outline";
-            } else {
+            } else if (route.name === "Analytics") {
+              icon = focused ? "analytics" : "analytics-outline";
+            } else if (route.name === "Activity") {
+              icon = focused ? "notifications-sharp" : "notifications-outline";
+            } else if (route.name === "ProfileTab") {
               icon = focused ? "person" : "person-outline";
             }
 
-            return (
-              <Ionicons
-                name={icon}
-                size={size}
-                color={color}
-              />
-            );
+            return <Ionicons name={icon} size={size} color={color} />;
           },
+          tabBarStyle: {backgroundColor: '#E3F2FD'}
         })}
       >
         <Tab.Screen
@@ -87,6 +91,20 @@ export default function App() {
           options={{
             title: "Home",
             headerShown: false,
+          }}
+        />
+         <Tab.Screen
+          name="Analytics"
+          component={AnalyticsScreen}
+          options={{
+            title: "Analitics",
+          }}
+        />
+         <Tab.Screen
+          name="Activity"
+          component={ActivityScreen}
+          options={{
+            title: "Activity",
           }}
         />
 
